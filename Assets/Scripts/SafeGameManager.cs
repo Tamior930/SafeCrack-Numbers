@@ -79,6 +79,60 @@ public class SafeGameManager : MonoBehaviour
             HandleWrong();
     }
 
+    private void HandleCorrect()
+    {
+        SetFeedback("Richtig!", Color.green);
+        _currentLevel++;
+
+        if (_currentLevel >= CorrectAnswers.Length)
+            StartCoroutine(ShowWinScreen());
+        else
+        {
+            _attemptsLeft = MaxAttempts;
+            StartCoroutine(NextLevel());
+        }
+    }
+
+    private void HandleWrong()
+    {
+        _attemptsLeft--;
+        answerInput.text = string.Empty;
+
+        if (_attemptsLeft <= 0)
+        {
+            SetFeedback("Alle Versuche aufgebraucht!", Color.red);
+            StartCoroutine(HardReset());
+        }
+        else
+        {
+            string v = _attemptsLeft == 1 ? "Versuch" : "Versuche";
+            SetFeedback($"Falsch! Noch {_attemptsLeft} {v} uebrig.", Color.red);
+            attemptsText.text = $"Versuche: {_attemptsLeft} / {MaxAttempts}";
+            FocusInput();
+        }
+    }
+
+    private IEnumerator NextLevel()
+    {
+        yield return new WaitForSeconds(FeedbackDelay);
+        RefreshUI();
+        SetFeedback("", Color.white);
+        FocusInput();
+    }
+
+    private IEnumerator ShowWinScreen()
+    {
+        yield return new WaitForSeconds(FeedbackDelay);
+        gameScreen.SetActive(false);
+        winScreen.SetActive(true);
+    }
+
+    private IEnumerator HardReset()
+    {
+        yield return new WaitForSeconds(2.0f);
+        ResetToStart();
+    }
+
     private void RefreshUI()
     {
         levelLabel.text   = $"Reihe {_currentLevel + 1} / {CorrectAnswers.Length}";
