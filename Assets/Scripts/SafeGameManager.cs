@@ -80,11 +80,11 @@ public class SafeGameManager : MonoBehaviour
         dvRT.anchorMin = new Vector2(0.05f, 1f);
         dvRT.anchorMax = new Vector2(0.95f, 1f);
         dvRT.pivot = new Vector2(0.5f, 1f);
-        dvRT.anchoredPosition = new Vector2(0, -75);
+        dvRT.anchoredPosition = new Vector2(0, -104);
         dvRT.sizeDelta = new Vector2(0, 2);
 
         _levelLabel = MakeText(_gameScreen, "LevelLabel", "", 20, FontStyles.Normal, TextDim);
-        PinTop(_levelLabel, gsRT, offsetY: -105, height: 32);
+        PinTop(_levelLabel, gsRT, offsetY: -120, height: 32);
         _levelLabel.alignment = TextAlignmentOptions.Center;
 
         _sequenceText = MakeText(_gameScreen, "SequenceText", "", 32, FontStyles.Bold, TextWhite);
