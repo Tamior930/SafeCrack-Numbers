@@ -65,9 +65,9 @@ public class SafeGameManager : MonoBehaviour
             return;
         }
 
-        if (!int.TryParse(raw, out int guess))
+        if (!int.TryParse(raw, out int guess) || guess < 0)
         {
-            SetFeedback("Nur Zahlen erlaubt.", Color.yellow);
+            SetFeedback("Nur positive ganze Zahlen erlaubt.", Color.yellow);
             answerInput.text = string.Empty;
             FocusInput();
             return;
