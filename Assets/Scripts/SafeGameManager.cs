@@ -55,6 +55,30 @@ public class SafeGameManager : MonoBehaviour
         FocusInput();
     }
 
+    private void TrySubmit()
+    {
+        string raw = answerInput.text.Trim();
+
+        if (string.IsNullOrEmpty(raw))
+        {
+            SetFeedback("Bitte eine Zahl eingeben.", Color.yellow);
+            return;
+        }
+
+        if (!int.TryParse(raw, out int guess))
+        {
+            SetFeedback("Nur Zahlen erlaubt.", Color.yellow);
+            answerInput.text = string.Empty;
+            FocusInput();
+            return;
+        }
+
+        if (guess == CorrectAnswers[_currentLevel])
+            HandleCorrect();
+        else
+            HandleWrong();
+    }
+
     private void RefreshUI()
     {
         levelLabel.text   = $"Reihe {_currentLevel + 1} / {CorrectAnswers.Length}";
