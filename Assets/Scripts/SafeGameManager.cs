@@ -64,6 +64,15 @@ public class SafeGameManager : MonoBehaviour
 
         var bg = MakeImage(canvasGO, "Background", BgColor);
         StretchFull(bg.GetComponent<RectTransform>());
+
+        _gameScreen = MakeImage(canvasGO, "GameScreen", PanelColor);
+        var gsRT = _gameScreen.GetComponent<RectTransform>();
+        Center(gsRT, new Vector2(740, 560));
+        AddOutline(_gameScreen, AccentBlue);
+
+        var title = MakeText(_gameScreen, "Title", "[ SAFE CRACK: NUMBERS ]", 34, FontStyles.Bold, AccentBlue);
+        PinTop(title, gsRT, offsetY: -48, height: 50);
+        title.alignment = TextAlignmentOptions.Center;
     }
 
     public void ResetToStart()
