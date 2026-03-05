@@ -105,6 +105,17 @@ public class SafeGameManager : MonoBehaviour
         _attemptsText.alignment = TextAlignmentOptions.Center;
 
         _answerInput = MakeInputField(_gameScreen, new Vector2(0, -55), new Vector2(280, 54));
+
+        _submitButton = MakeButton(_gameScreen, "SubmitButton", "BESTATIGEN", AccentBlue,
+                                   new Vector2(0, -125), new Vector2(260, 52));
+
+        _feedbackText = MakeText(_gameScreen, "FeedbackText", "", 20, FontStyles.Italic, TextWhite);
+        var fbRT = _feedbackText.GetComponent<RectTransform>();
+        fbRT.anchorMin = new Vector2(0.5f, 0f); fbRT.anchorMax = new Vector2(0.5f, 0f);
+        fbRT.pivot = new Vector2(0.5f, 0f);
+        fbRT.anchoredPosition = new Vector2(0, 28);
+        fbRT.sizeDelta = new Vector2(680, 36);
+        _feedbackText.alignment = TextAlignmentOptions.Center;
     }
 
     public void ResetToStart()
@@ -297,6 +308,34 @@ public class SafeGameManager : MonoBehaviour
         field.caretColor = new Color(0.25f, 0.65f, 1f);
         field.selectionColor = new Color(0.25f, 0.65f, 1f, 0.4f);
         return field;
+    }
+
+    private static Button MakeButton(GameObject parent, string name, string label,
+                                     Color accent, Vector2 pos, Vector2 size)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        var rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0.5f); rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f); rt.anchoredPosition = pos; rt.sizeDelta = size;
+        go.AddComponent<Image>().color = accent;
+        var btn = go.AddComponent<Button>();
+        var cb = btn.colors;
+        cb.normalColor = accent;
+        cb.highlightedColor = Color.Lerp(accent, Color.white, 0.25f);
+        cb.pressedColor = Color.Lerp(accent, Color.black, 0.25f);
+        btn.colors = cb;
+
+        var lbl = new GameObject("Label");
+        lbl.transform.SetParent(go.transform, false);
+        var lRT = lbl.AddComponent<RectTransform>();
+        lRT.anchorMin = Vector2.zero; lRT.anchorMax = Vector2.one;
+        lRT.offsetMin = Vector2.zero; lRT.offsetMax = Vector2.zero;
+        var tmp = lbl.AddComponent<TextMeshProUGUI>();
+        tmp.text = label; tmp.fontSize = 20; tmp.fontStyle = FontStyles.Bold;
+        tmp.color = Color.white; tmp.alignment = TextAlignmentOptions.Center;
+        tmp.raycastTarget = false;
+        return btn;
     }
 
     private static void StretchFull(RectTransform rt)
