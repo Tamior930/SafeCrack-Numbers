@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class SafeGameManager : MonoBehaviour
@@ -50,7 +51,7 @@ public class SafeGameManager : MonoBehaviour
         {
             var esGO = new GameObject("EventSystem");
             esGO.AddComponent<EventSystem>();
-            esGO.AddComponent<StandaloneInputModule>();
+            esGO.AddComponent<InputSystemUIInputModule>();
         }
 
         var canvasGO = new GameObject("Canvas");
