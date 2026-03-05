@@ -46,7 +46,24 @@ public class SafeGameManager : MonoBehaviour
 
     private void BuildUI()
     {
-        // TODO: build UI elements
+        if (FindFirstObjectByType<EventSystem>() == null)
+        {
+            var esGO = new GameObject("EventSystem");
+            esGO.AddComponent<EventSystem>();
+            esGO.AddComponent<StandaloneInputModule>();
+        }
+
+        var canvasGO = new GameObject("Canvas");
+        var canvas = canvasGO.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        var scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
+        canvasGO.AddComponent<GraphicRaycaster>();
+
+        var bg = MakeImage(canvasGO, "Background", BgColor);
+        StretchFull(bg.GetComponent<RectTransform>());
     }
 
     public void ResetToStart()
