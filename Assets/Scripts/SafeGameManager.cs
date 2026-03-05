@@ -47,6 +47,9 @@ public class SafeGameManager : MonoBehaviour
     private int _currentLevel;
     private int _attemptsLeft;
     private bool _inputLocked;
+    private int[] _shuffledOrder;
+
+    private Sequence CurrentSequence => Sequences[_shuffledOrder[_currentLevel]];
 
     // Runtime UI references (built in code)
     private TMP_Text _levelLabel;
@@ -175,12 +178,25 @@ public class SafeGameManager : MonoBehaviour
         _attemptsLeft = MaxAttempts;
         _inputLocked  = false;
 
+        ShuffleSequences();
+
         _gameScreen.SetActive(true);
         _winScreen.SetActive(false);
 
         RefreshUI();
         ClearFeedback();
         FocusInput();
+    }
+
+    private void ShuffleSequences()
+    {
+        _shuffledOrder = new int[Sequences.Length];
+        for (int i = 0; i < _shuffledOrder.Length; i++) _shuffledOrder[i] = i;
+        for (int i = _shuffledOrder.Length - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (_shuffledOrder[i], _shuffledOrder[j]) = (_shuffledOrder[j], _shuffledOrder[i]);
+        }
     }
 
     private void TrySubmit()
@@ -203,7 +219,7 @@ public class SafeGameManager : MonoBehaviour
             return;
         }
 
-        if (guess == Sequences[_currentLevel].Answer)
+        if (guess == CurrentSequence.Answer)
             HandleCorrect();
         else
             HandleWrong();
@@ -269,7 +285,7 @@ public class SafeGameManager : MonoBehaviour
     private void RefreshUI()
     {
         _levelLabel.text   = $"Reihe {_currentLevel + 1} von {Sequences.Length}";
-        _sequenceText.text = Sequences[_currentLevel].BuildDisplay();
+        _sequenceText.text = CurrentSequence.BuildDisplay();
         _attemptsText.text = $"Versuche noch: {_attemptsLeft} / {MaxAttempts}";
         _answerInput.text  = string.Empty;
     }
