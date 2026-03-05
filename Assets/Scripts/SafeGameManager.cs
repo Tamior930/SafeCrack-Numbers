@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,4 +34,44 @@ public class SafeGameManager : MonoBehaviour
     [Header("Screens")]
     [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject winScreen;
+
+    private void Start()
+    {
+        answerInput.onSubmit.AddListener(_ => TrySubmit());
+        submitButton.onClick.AddListener(TrySubmit);
+        ResetToStart();
+    }
+
+    public void ResetToStart()
+    {
+        _currentLevel = 0;
+        _attemptsLeft = MaxAttempts;
+
+        gameScreen.SetActive(true);
+        winScreen.SetActive(false);
+
+        RefreshUI();
+        SetFeedback("", Color.white);
+        FocusInput();
+    }
+
+    private void RefreshUI()
+    {
+        levelLabel.text   = $"Reihe {_currentLevel + 1} / {CorrectAnswers.Length}";
+        sequenceText.text = SequenceDisplays[_currentLevel];
+        attemptsText.text = $"Versuche: {_attemptsLeft} / {MaxAttempts}";
+        answerInput.text  = string.Empty;
+    }
+
+    private void FocusInput()
+    {
+        answerInput.Select();
+        answerInput.ActivateInputField();
+    }
+
+    private void SetFeedback(string msg, Color color)
+    {
+        feedbackText.text  = msg;
+        feedbackText.color = color;
+    }
 }
