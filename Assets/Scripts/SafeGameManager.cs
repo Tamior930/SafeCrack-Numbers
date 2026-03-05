@@ -116,6 +116,32 @@ public class SafeGameManager : MonoBehaviour
         fbRT.anchoredPosition = new Vector2(0, 28);
         fbRT.sizeDelta = new Vector2(680, 36);
         _feedbackText.alignment = TextAlignmentOptions.Center;
+
+        _winScreen = MakeImage(canvasGO, "WinScreen", new Color(0.07f, 0.16f, 0.10f));
+        var wsRT = _winScreen.GetComponent<RectTransform>();
+        Center(wsRT, new Vector2(740, 420));
+        AddOutline(_winScreen, AccentGreen);
+
+        var winTitle = MakeText(_winScreen, "WinTitle", "SAFE GEOEFFNET!", 46, FontStyles.Bold, AccentGreen);
+        PinTop(winTitle, wsRT, offsetY: -90, height: 60);
+        winTitle.alignment = TextAlignmentOptions.Center;
+
+        var winSub = MakeText(_winScreen, "WinSub", "Alle 4 Zahlenreihen geloest!\nLevel bestanden.", 22, FontStyles.Normal, TextWhite);
+        var winSubRT = winSub.GetComponent<RectTransform>();
+        winSubRT.anchorMin = new Vector2(0.5f, 0.5f); winSubRT.anchorMax = new Vector2(0.5f, 0.5f);
+        winSubRT.pivot = new Vector2(0.5f, 0.5f);
+        winSubRT.anchoredPosition = new Vector2(0, 20);
+        winSubRT.sizeDelta = new Vector2(620, 80);
+        winSub.alignment = TextAlignmentOptions.Center;
+
+        var restartBtn = MakeButton(_winScreen, "RestartButton", "NOCHMAL SPIELEN", AccentGreen,
+                                    new Vector2(0, -110), new Vector2(280, 54));
+
+        _submitButton.onClick.AddListener(TrySubmit);
+        _answerInput.onSubmit.AddListener(_ => TrySubmit());
+        restartBtn.onClick.AddListener(ResetToStart);
+
+        _winScreen.SetActive(false);
     }
 
     public void ResetToStart()
