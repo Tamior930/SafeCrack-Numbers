@@ -103,6 +103,8 @@ public class SafeGameManager : MonoBehaviour
         attRT.anchoredPosition = new Vector2(0, 20);
         attRT.sizeDelta = new Vector2(680, 34);
         _attemptsText.alignment = TextAlignmentOptions.Center;
+
+        _answerInput = MakeInputField(_gameScreen, new Vector2(0, -55), new Vector2(280, 54));
     }
 
     public void ResetToStart()
@@ -231,4 +233,96 @@ public class SafeGameManager : MonoBehaviour
     }
 
     private enum FeedbackKind { Success, Warning, Error }
+
+    private static GameObject MakeImage(GameObject parent, string name, Color color)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        go.AddComponent<Image>().color = color;
+        return go;
+    }
+
+    private static TMP_Text MakeText(GameObject parent, string name, string text,
+                                     float size, FontStyles style, Color color)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent.transform, false);
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+        tmp.text = text; tmp.fontSize = size; tmp.fontStyle = style;
+        tmp.color = color; tmp.raycastTarget = false;
+        return tmp;
+    }
+
+    private static TMP_InputField MakeInputField(GameObject parent, Vector2 pos, Vector2 size)
+    {
+        var container = new GameObject("AnswerInput");
+        container.transform.SetParent(parent.transform, false);
+        var cRT = container.AddComponent<RectTransform>();
+        cRT.anchorMin = new Vector2(0.5f, 0.5f); cRT.anchorMax = new Vector2(0.5f, 0.5f);
+        cRT.pivot = new Vector2(0.5f, 0.5f); cRT.anchoredPosition = pos; cRT.sizeDelta = size;
+        container.AddComponent<Image>().color = new Color(0.06f, 0.08f, 0.14f);
+        var ol = container.AddComponent<Outline>();
+        ol.effectColor = new Color(0.3f, 0.6f, 1f, 0.6f); ol.effectDistance = new Vector2(1.5f, 1.5f);
+
+        var area = new GameObject("Text Area");
+        area.transform.SetParent(container.transform, false);
+        var aRT = area.AddComponent<RectTransform>();
+        aRT.anchorMin = Vector2.zero; aRT.anchorMax = Vector2.one;
+        aRT.offsetMin = new Vector2(10, 6); aRT.offsetMax = new Vector2(-10, -6);
+        area.AddComponent<RectMask2D>();
+
+        var ph = new GameObject("Placeholder");
+        ph.transform.SetParent(area.transform, false);
+        var phRT = ph.AddComponent<RectTransform>();
+        phRT.anchorMin = Vector2.zero; phRT.anchorMax = Vector2.one;
+        phRT.offsetMin = Vector2.zero; phRT.offsetMax = Vector2.zero;
+        var phT = ph.AddComponent<TextMeshProUGUI>();
+        phT.text = "Zahl eingeben..."; phT.fontSize = 22;
+        phT.color = new Color(0.4f, 0.45f, 0.55f);
+        phT.alignment = TextAlignmentOptions.Center;
+
+        var inputText = new GameObject("Text");
+        inputText.transform.SetParent(area.transform, false);
+        var itRT = inputText.AddComponent<RectTransform>();
+        itRT.anchorMin = Vector2.zero; itRT.anchorMax = Vector2.one;
+        itRT.offsetMin = Vector2.zero; itRT.offsetMax = Vector2.zero;
+        var itT = inputText.AddComponent<TextMeshProUGUI>();
+        itT.fontSize = 26; itT.color = new Color(0.95f, 0.95f, 0.98f);
+        itT.alignment = TextAlignmentOptions.Center;
+
+        var field = container.AddComponent<TMP_InputField>();
+        field.textViewport = aRT; field.textComponent = itT; field.placeholder = phT;
+        field.contentType = TMP_InputField.ContentType.IntegerNumber;
+        field.characterLimit = 8;
+        field.caretColor = new Color(0.25f, 0.65f, 1f);
+        field.selectionColor = new Color(0.25f, 0.65f, 1f, 0.4f);
+        return field;
+    }
+
+    private static void StretchFull(RectTransform rt)
+    {
+        rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+    }
+
+    private static void Center(RectTransform rt, Vector2 size)
+    {
+        rt.anchorMin = new Vector2(0.5f, 0.5f); rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f); rt.anchoredPosition = Vector2.zero; rt.sizeDelta = size;
+    }
+
+    private static void PinTop(TMP_Text tmp, RectTransform parentRT, float offsetY, float height)
+    {
+        var rt = tmp.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f); rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f); rt.anchoredPosition = new Vector2(0, offsetY);
+        rt.sizeDelta = new Vector2(parentRT.sizeDelta.x - 60, height);
+    }
+
+    private static void AddOutline(GameObject go, Color color)
+    {
+        var o = go.AddComponent<Outline>();
+        o.effectColor = new Color(color.r, color.g, color.b, 0.8f);
+        o.effectDistance = new Vector2(2, 2);
+    }
 }
