@@ -10,15 +10,39 @@ public class SafeGameManager : MonoBehaviour
     private const int MaxAttempts = 3;
     private const float FeedbackDelay = 1.0f;
 
-    private static readonly string[] SequenceDisplays =
+    private class Sequence
     {
-        "2 -> 4 -> 7 -> 11 -> 16 -> ?",
-        "2 -> 6 -> 7 -> 21 -> 22 -> ?",
-        "1 -> 2 -> 3 -> 5 -> 8 -> ?",
-        "1 -> 4 -> 9 -> 16 -> 25 -> ?"
-    };
+        private readonly System.Func<int, int> _f;
+        public readonly int DisplayCount;
 
-    private static readonly int[] CorrectAnswers = { 22, 66, 13, 36 };
+        public Sequence(System.Func<int, int> formula, int displayCount = 5)
+        {
+            _f = formula;
+            DisplayCount = displayCount;
+        }
+
+        public int Answer => _f(DisplayCount);
+
+        public string BuildDisplay()
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < DisplayCount; i++)
+            {
+                sb.Append(_f(i));
+                if (i < DisplayCount - 1) sb.Append(" -> ");
+            }
+            sb.Append(" -> ?");
+            return sb.ToString();
+        }
+    }
+
+    private static readonly Sequence[] Sequences =
+    {
+        new Sequence(n => 1 + (n + 1) * (n + 2) / 2),
+        new Sequence(n => { int v = 2; for (int i = 0; i < n; i++) v = (i % 2 == 0) ? v * 3 : v + 1; return v; }),
+        new Sequence(n => { if (n == 0) return 1; if (n == 1) return 2; int a = 1, b = 2; for (int i = 2; i <= n; i++) { int t = a + b; a = b; b = t; } return b; }),
+        new Sequence(n => (n + 1) * (n + 1))
+    };
 
     private int _currentLevel;
     private int _attemptsLeft;
@@ -179,7 +203,7 @@ public class SafeGameManager : MonoBehaviour
             return;
         }
 
-        if (guess == CorrectAnswers[_currentLevel])
+        if (guess == Sequences[_currentLevel].Answer)
             HandleCorrect();
         else
             HandleWrong();
@@ -191,7 +215,7 @@ public class SafeGameManager : MonoBehaviour
         ShowFeedback("Richtig!", FeedbackKind.Success);
         _currentLevel++;
 
-        if (_currentLevel >= CorrectAnswers.Length)
+        if (_currentLevel >= Sequences.Length)
             StartCoroutine(ShowWinScreen());
         else
         {
@@ -244,8 +268,8 @@ public class SafeGameManager : MonoBehaviour
 
     private void RefreshUI()
     {
-        _levelLabel.text   = $"Reihe {_currentLevel + 1} von {CorrectAnswers.Length}";
-        _sequenceText.text = SequenceDisplays[_currentLevel];
+        _levelLabel.text   = $"Reihe {_currentLevel + 1} von {Sequences.Length}";
+        _sequenceText.text = Sequences[_currentLevel].BuildDisplay();
         _attemptsText.text = $"Versuche noch: {_attemptsLeft} / {MaxAttempts}";
         _answerInput.text  = string.Empty;
     }
