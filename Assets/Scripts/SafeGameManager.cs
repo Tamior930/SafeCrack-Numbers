@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SafeGameManager : MonoBehaviour
@@ -22,25 +23,30 @@ public class SafeGameManager : MonoBehaviour
     private int _attemptsLeft;
     private bool _inputLocked;
 
-    [Header("Texte")]
-    [SerializeField] private TMP_Text levelLabel;
-    [SerializeField] private TMP_Text sequenceText;
-    [SerializeField] private TMP_Text attemptsText;
-    [SerializeField] private TMP_Text feedbackText;
+    // Runtime UI references (built in code)
+    private TMP_Text _levelLabel;
+    private TMP_Text _sequenceText;
+    private TMP_Text _attemptsText;
+    private TMP_Text _feedbackText;
+    private TMP_InputField _answerInput;
+    private Button _submitButton;
+    private GameObject _gameScreen;
+    private GameObject _winScreen;
 
-    [Header("Eingabe")]
-    [SerializeField] private TMP_InputField answerInput;
-    [SerializeField] private Button submitButton;
+    // Color palette
+    private static readonly Color BgColor    = new Color(0.07f, 0.09f, 0.14f);
+    private static readonly Color PanelColor = new Color(0.11f, 0.14f, 0.22f);
+    private static readonly Color AccentBlue = new Color(0.25f, 0.60f, 1.00f);
+    private static readonly Color AccentGreen= new Color(0.20f, 0.85f, 0.45f);
+    private static readonly Color TextWhite  = new Color(0.95f, 0.95f, 0.98f);
+    private static readonly Color TextDim    = new Color(0.65f, 0.70f, 0.80f);
 
-    [Header("Screens")]
-    [SerializeField] private GameObject gameScreen;
-    [SerializeField] private GameObject winScreen;
+    private void Awake() => BuildUI();
+    private void Start()  => ResetToStart();
 
-    private void Start()
+    private void BuildUI()
     {
-        answerInput.onSubmit.AddListener(_ => TrySubmit());
-        submitButton.onClick.AddListener(TrySubmit);
-        ResetToStart();
+        // TODO: build UI elements
     }
 
     public void ResetToStart()
@@ -49,11 +55,11 @@ public class SafeGameManager : MonoBehaviour
         _attemptsLeft = MaxAttempts;
         _inputLocked  = false;
 
-        gameScreen.SetActive(true);
-        winScreen.SetActive(false);
+        _gameScreen.SetActive(true);
+        _winScreen.SetActive(false);
 
         RefreshUI();
-        SetFeedback("", Color.white);
+        ClearFeedback();
         FocusInput();
     }
 
@@ -61,18 +67,18 @@ public class SafeGameManager : MonoBehaviour
     {
         if (_inputLocked) return;
 
-        string raw = answerInput.text.Trim();
+        string raw = (_answerInput.text ?? "").Trim();
 
         if (string.IsNullOrEmpty(raw))
         {
-            SetFeedback("Bitte eine Zahl eingeben.", Color.yellow);
+            ShowFeedback("Bitte eine Zahl eingeben.", FeedbackKind.Warning);
             return;
         }
 
         if (!int.TryParse(raw, out int guess) || guess < 0)
         {
-            SetFeedback("Nur positive ganze Zahlen erlaubt.", Color.yellow);
-            answerInput.text = string.Empty;
+            ShowFeedback("Nur positive ganze Zahlen erlaubt.", FeedbackKind.Warning);
+            _answerInput.text = string.Empty;
             FocusInput();
             return;
         }
@@ -86,7 +92,7 @@ public class SafeGameManager : MonoBehaviour
     private void HandleCorrect()
     {
         _inputLocked = true;
-        SetFeedback("Richtig!", Color.green);
+        ShowFeedback("Richtig!", FeedbackKind.Success);
         _currentLevel++;
 
         if (_currentLevel >= CorrectAnswers.Length)
@@ -101,19 +107,19 @@ public class SafeGameManager : MonoBehaviour
     private void HandleWrong()
     {
         _attemptsLeft--;
-        answerInput.text = string.Empty;
+        _answerInput.text = string.Empty;
 
         if (_attemptsLeft <= 0)
         {
             _inputLocked = true;
-            SetFeedback("Alle Versuche aufgebraucht!", Color.red);
+            ShowFeedback("Alle Versuche aufgebraucht! Safe gesperrt.", FeedbackKind.Error);
             StartCoroutine(HardReset());
         }
         else
         {
             string v = _attemptsLeft == 1 ? "Versuch" : "Versuche";
-            SetFeedback($"Falsch! Noch {_attemptsLeft} {v} uebrig.", Color.red);
-            attemptsText.text = $"Versuche: {_attemptsLeft} / {MaxAttempts}";
+            ShowFeedback($"Falsch! Noch {_attemptsLeft} {v} uebrig.", FeedbackKind.Error);
+            _attemptsText.text = $"Versuche noch: {_attemptsLeft} / {MaxAttempts}";
             FocusInput();
         }
     }
@@ -123,40 +129,50 @@ public class SafeGameManager : MonoBehaviour
         yield return new WaitForSeconds(FeedbackDelay);
         _inputLocked = false;
         RefreshUI();
-        SetFeedback("", Color.white);
+        ClearFeedback();
         FocusInput();
     }
 
     private IEnumerator ShowWinScreen()
     {
         yield return new WaitForSeconds(FeedbackDelay);
-        gameScreen.SetActive(false);
-        winScreen.SetActive(true);
+        _gameScreen.SetActive(false);
+        _winScreen.SetActive(true);
     }
 
     private IEnumerator HardReset()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(2.2f);
         ResetToStart();
     }
 
     private void RefreshUI()
     {
-        levelLabel.text   = $"Reihe {_currentLevel + 1} / {CorrectAnswers.Length}";
-        sequenceText.text = SequenceDisplays[_currentLevel];
-        attemptsText.text = $"Versuche: {_attemptsLeft} / {MaxAttempts}";
-        answerInput.text  = string.Empty;
+        _levelLabel.text   = $"Reihe {_currentLevel + 1} von {CorrectAnswers.Length}";
+        _sequenceText.text = SequenceDisplays[_currentLevel];
+        _attemptsText.text = $"Versuche noch: {_attemptsLeft} / {MaxAttempts}";
+        _answerInput.text  = string.Empty;
     }
 
     private void FocusInput()
     {
-        answerInput.Select();
-        answerInput.ActivateInputField();
+        _answerInput.Select();
+        _answerInput.ActivateInputField();
     }
 
-    private void SetFeedback(string msg, Color color)
+    private void ClearFeedback() => _feedbackText.text = string.Empty;
+
+    private void ShowFeedback(string msg, FeedbackKind kind)
     {
-        feedbackText.text  = msg;
-        feedbackText.color = color;
+        _feedbackText.text = msg;
+        _feedbackText.color = kind switch
+        {
+            FeedbackKind.Success => new Color(0.2f, 0.90f, 0.45f),
+            FeedbackKind.Warning => new Color(1.0f, 0.80f, 0.10f),
+            FeedbackKind.Error   => new Color(0.95f, 0.25f, 0.20f),
+            _                    => TextWhite
+        };
     }
+
+    private enum FeedbackKind { Success, Warning, Error }
 }
