@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SafeGameManager : MonoBehaviour
 {
@@ -14,4 +16,21 @@ public class SafeGameManager : MonoBehaviour
     };
 
     private static readonly int[] CorrectAnswers = { 22, 66, 13, 36 };
+
+    private int _currentLevel;
+    private int _attemptsLeft;
+
+    [Header("Texte")]
+    [SerializeField] private TMP_Text levelLabel;
+    [SerializeField] private TMP_Text sequenceText;
+    [SerializeField] private TMP_Text attemptsText;
+    [SerializeField] private TMP_Text feedbackText;
+
+    [Header("Eingabe")]
+    [SerializeField] private TMP_InputField answerInput;
+    [SerializeField] private Button submitButton;
+
+    [Header("Screens")]
+    [SerializeField] private GameObject gameScreen;
+    [SerializeField] private GameObject winScreen;
 }
