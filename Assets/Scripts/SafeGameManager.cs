@@ -20,6 +20,7 @@ public class SafeGameManager : MonoBehaviour
 
     private int _currentLevel;
     private int _attemptsLeft;
+    private bool _inputLocked;
 
     [Header("Texte")]
     [SerializeField] private TMP_Text levelLabel;
@@ -46,6 +47,7 @@ public class SafeGameManager : MonoBehaviour
     {
         _currentLevel = 0;
         _attemptsLeft = MaxAttempts;
+        _inputLocked  = false;
 
         gameScreen.SetActive(true);
         winScreen.SetActive(false);
@@ -57,6 +59,8 @@ public class SafeGameManager : MonoBehaviour
 
     private void TrySubmit()
     {
+        if (_inputLocked) return;
+
         string raw = answerInput.text.Trim();
 
         if (string.IsNullOrEmpty(raw))
@@ -81,6 +85,7 @@ public class SafeGameManager : MonoBehaviour
 
     private void HandleCorrect()
     {
+        _inputLocked = true;
         SetFeedback("Richtig!", Color.green);
         _currentLevel++;
 
@@ -100,6 +105,7 @@ public class SafeGameManager : MonoBehaviour
 
         if (_attemptsLeft <= 0)
         {
+            _inputLocked = true;
             SetFeedback("Alle Versuche aufgebraucht!", Color.red);
             StartCoroutine(HardReset());
         }
@@ -115,6 +121,7 @@ public class SafeGameManager : MonoBehaviour
     private IEnumerator NextLevel()
     {
         yield return new WaitForSeconds(FeedbackDelay);
+        _inputLocked = false;
         RefreshUI();
         SetFeedback("", Color.white);
         FocusInput();
