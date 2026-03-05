@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class SafeGameManager : MonoBehaviour
 {
-    private const int MaxAttempts = 5;
+    private const int MaxAttempts = 3;
     private const float FeedbackDelay = 1.0f;
 
     private static readonly string[] SequenceDisplays =
