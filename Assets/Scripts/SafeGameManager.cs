@@ -73,6 +73,36 @@ public class SafeGameManager : MonoBehaviour
         var title = MakeText(_gameScreen, "Title", "[ SAFE CRACK: NUMBERS ]", 34, FontStyles.Bold, AccentBlue);
         PinTop(title, gsRT, offsetY: -48, height: 50);
         title.alignment = TextAlignmentOptions.Center;
+
+        var divider = MakeImage(_gameScreen, "Divider", new Color(0.25f, 0.60f, 1f, 0.35f));
+        var dvRT = divider.GetComponent<RectTransform>();
+        dvRT.anchorMin = new Vector2(0.05f, 1f);
+        dvRT.anchorMax = new Vector2(0.95f, 1f);
+        dvRT.pivot = new Vector2(0.5f, 1f);
+        dvRT.anchoredPosition = new Vector2(0, -75);
+        dvRT.sizeDelta = new Vector2(0, 2);
+
+        _levelLabel = MakeText(_gameScreen, "LevelLabel", "", 20, FontStyles.Normal, TextDim);
+        PinTop(_levelLabel, gsRT, offsetY: -105, height: 32);
+        _levelLabel.alignment = TextAlignmentOptions.Center;
+
+        _sequenceText = MakeText(_gameScreen, "SequenceText", "", 32, FontStyles.Bold, TextWhite);
+        var seqRT = _sequenceText.GetComponent<RectTransform>();
+        seqRT.anchorMin = new Vector2(0.5f, 0.5f);
+        seqRT.anchorMax = new Vector2(0.5f, 0.5f);
+        seqRT.pivot = new Vector2(0.5f, 0.5f);
+        seqRT.anchoredPosition = new Vector2(0, 80);
+        seqRT.sizeDelta = new Vector2(680, 60);
+        _sequenceText.alignment = TextAlignmentOptions.Center;
+
+        _attemptsText = MakeText(_gameScreen, "AttemptsText", "", 20, FontStyles.Normal, TextDim);
+        var attRT = _attemptsText.GetComponent<RectTransform>();
+        attRT.anchorMin = new Vector2(0.5f, 0.5f);
+        attRT.anchorMax = new Vector2(0.5f, 0.5f);
+        attRT.pivot = new Vector2(0.5f, 0.5f);
+        attRT.anchoredPosition = new Vector2(0, 20);
+        attRT.sizeDelta = new Vector2(680, 34);
+        _attemptsText.alignment = TextAlignmentOptions.Center;
     }
 
     public void ResetToStart()
