@@ -52,13 +52,3 @@ The game is now running at **http://localhost:8080** — open it in any browser.
 ```bash
 docker compose down
 ```
-
-### Manual Docker commands (alternative)
-
-```bash
-# Build the image manually
-docker build -t safecrack-numbers .
-
-# Run the container
-docker run -d -p 8080:80 --name safecrack safecrack-numbers
-```
