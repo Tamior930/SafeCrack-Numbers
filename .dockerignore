@@ -1,0 +1,29 @@
+# Unity generated folders (large, not needed in image)
+Library/
+Temp/
+Logs/
+obj/
+UserSettings/
+
+# Unity source files (only the Build output is needed)
+Assets/
+Packages/
+ProjectSettings/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sln
+*.slnx
+*.csproj
+
+# Git
+.git/
+.gitignore
+
+# Docs
+README.md
+CHANGELOG.md
+
+# Build artifacts we don't want leaking in
+Build/WebGL/Build/*.symbols.json

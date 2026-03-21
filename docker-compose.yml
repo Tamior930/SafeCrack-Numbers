@@ -1,0 +1,8 @@
+services:
+  safecrack:
+    build: .
+    image: safecrack-numbers:latest
+    container_name: safecrack-numbers
+    ports:
+      - "8080:80"
+    restart: unless-stopped
