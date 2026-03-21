@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class SafeGameManager : MonoBehaviour
 {
-    private const int MaxAttempts = GameConstants.MaxAttempts;
-    private const float FeedbackDelay = GameConstants.FeedbackDelay;
+    private const int MaxAttempts = 3;
+    private const float FeedbackDelay = 1.0f;
 
     private class Sequence
     {
@@ -278,7 +278,7 @@ public class SafeGameManager : MonoBehaviour
 
     private IEnumerator HardReset()
     {
-        yield return new WaitForSeconds(GameConstants.HardResetDelay);
+        yield return new WaitForSeconds(2.2f);
         ResetToStart();
     }
 
