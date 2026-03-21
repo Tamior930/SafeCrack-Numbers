@@ -62,37 +62,3 @@ docker build -t safecrack-numbers .
 # Run the container
 docker run -d -p 8080:80 --name safecrack safecrack-numbers
 ```
-
----
-
-## Project structure
-
-```
-SafeCrack-Numbers/
-├── Assets/
-│   └── Scripts/
-│       └── SafeGameManager.cs   # All game logic + runtime UI
-├── Build/
-│   └── WebGL/                   # ← Unity WebGL export goes here
-├── Dockerfile
-├── docker-compose.yml
-├── nginx.conf                   # Unity WebGL MIME-type config
-└── .dockerignore
-```
-
----
-
-## Tech stack
-
-| Area | Technology |
-|------|-----------|
-| Engine | Unity 6 (URP) |
-| Language | C# |
-| UI | Runtime-built (no prefabs) |
-| Text | TextMeshPro |
-| Input | Unity Input System |
-| Container | nginx:alpine via Docker |
-
----
-
-*Projekt: Innovation Lab WH – Safe Crack Numbers | Kunde: Fabian Wagner*
