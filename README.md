@@ -33,8 +33,8 @@ mathematical rule and enter the correct answer.
 ### 1 – Export the WebGL build from Unity
 
 1. Open the project in **Unity 6+**
-2. Go to **File → Build Settings**
-3. Select **WebGL** → click **Switch Platform**
+2. Go to **File → Build Profiles**
+3. Select **Web** → click **Switch Platform**
 4. Click **Build** and choose the folder **`Build/WebGL`** inside this repository
 5. Wait for the build to finish
 
