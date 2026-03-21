@@ -51,7 +51,7 @@ public class SafeGameManager : MonoBehaviour
 
     private Sequence CurrentSequence => Sequences[_shuffledOrder[_currentLevel]];
 
-    // Runtime UI references (built in code)
+    // --- Runtime UI references (all built procedurally in BuildUI) ---
     private TMP_Text _levelLabel;
     private TMP_Text _sequenceText;
     private TMP_Text _attemptsText;
@@ -61,7 +61,7 @@ public class SafeGameManager : MonoBehaviour
     private GameObject _gameScreen;
     private GameObject _winScreen;
 
-    // Color palette
+    // --- Color palette (dark high-contrast theme) ---
     private static readonly Color BgColor    = new Color(0.07f, 0.09f, 0.14f);
     private static readonly Color PanelColor = new Color(0.11f, 0.14f, 0.22f);
     private static readonly Color AccentBlue = new Color(0.25f, 0.60f, 1.00f);
